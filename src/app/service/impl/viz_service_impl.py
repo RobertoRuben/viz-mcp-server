@@ -1,14 +1,15 @@
 import asyncio
 import io
-import sys
 import platform
-import polars as pl
+import sys
+
 import matplotlib
 import matplotlib.pyplot as plt
+import polars as pl
 import seaborn as sns
+from settings import Settings
 
 from ..interface import IVizService
-from ...settings import Settings
 
 
 class VizServiceImpl(IVizService):

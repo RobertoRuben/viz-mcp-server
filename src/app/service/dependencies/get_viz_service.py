@@ -1,7 +1,9 @@
 from functools import lru_cache
-from ..interface import IVizService
+
+from settings import get_settings
+
 from ..impl import VizServiceImpl
-from ...settings import get_settings
+from ..interface import IVizService
 
 
 @lru_cache
