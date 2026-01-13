@@ -1,4 +1,5 @@
 from functools import lru_cache
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -28,6 +29,7 @@ class Settings(BaseSettings):
 
     chart_dpi: int = 150
     chart_style: str = "whitegrid"
+    data_dir: str = "/app/data"
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"
@@ -45,4 +47,5 @@ def get_settings() -> Settings:
     Returns:
         Settings: The initialized application configuration object.
     """
+    return Settings()
     return Settings()
