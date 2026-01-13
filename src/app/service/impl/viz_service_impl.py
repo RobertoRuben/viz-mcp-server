@@ -1,7 +1,8 @@
 import asyncio
-import io
+import os
 import platform
 import sys
+import uuid
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -15,43 +16,27 @@ from ..interface import IVizService
 class VizServiceImpl(IVizService):
     """Implementation of IVizService using Polars and Matplotlib/Seaborn.
 
-    This class handles the safe execution of plotting code and manages the
-    rendering context to ensure images are generated in memory without
-    filesystem side effects.
-
-    Attributes:
-        settings (Settings): Application configuration settings.
-        _lock (asyncio.Lock): Mutex to prevent race conditions on the global
-            Matplotlib state machine.
+    Now supports saving files to a shared volume for inter-service communication.
     """
 
     def __init__(self, settings: Settings):
-        """Initializes the service with configuration and threading safety.
-
-        Args:
-            settings (Settings): The injected application settings.
-        """
         self.settings = settings
         self._lock = asyncio.Lock()
 
         plt.switch_backend("Agg")
         sns.set_theme(style=self.settings.chart_style)
 
-    async def generate_chart(self, data: list[dict[str, object]], code: str) -> bytes:
-        """Generates a chart image from data and execution code.
+        os.makedirs(self.settings.data_dir, exist_ok=True)
 
-        It uses an asyncio Lock to ensure exclusive access to the Matplotlib
-        pyplot state machine during the rendering process.
+    async def generate_chart(self, data: list[dict[str, object]], code: str) -> str:
+        """Generates a chart and SAVES IT TO DISK.
 
         Args:
             data (list[dict[str, object]]): The source data.
             code (str): The Python plotting code.
 
         Returns:
-            bytes: The PNG image data.
-
-        Raises:
-            ValueError: If data parsing fails or code execution errors occur.
+            str: The filename of the saved chart (e.g., 'chart_a1b2c3d4.png').
         """
         try:
             df = pl.DataFrame(data)
@@ -71,13 +56,14 @@ class VizServiceImpl(IVizService):
 
                 plt.tight_layout()
 
-                buffer = io.BytesIO()
-                plt.savefig(buffer, format="png", dpi=self.settings.chart_dpi)
+                filename = f"chart_{uuid.uuid4().hex[:8]}.png"
+                filepath = os.path.join(self.settings.data_dir, filename)
+
+                plt.savefig(filepath, format="png", dpi=self.settings.chart_dpi)
 
                 plt.close()
-                buffer.seek(0)
 
-                return buffer.read()
+                return filename
 
             except Exception as e:
                 plt.close()

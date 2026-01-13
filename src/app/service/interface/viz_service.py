@@ -10,15 +10,15 @@ class IVizService(ABC):
     """
 
     @abstractmethod
-    async def generate_chart(self, data: list[dict[str, any]], code: str) -> bytes:
+    async def generate_chart(self, data: list[dict[str, object]], code: str) -> str:
         """Generates a chart image from data and execution code.
 
         Args:
-            data (list[dict[str, any]]): The source data as a list of dictionaries.
+            data (list[dict[str, object]]): The source data as a list of dictionaries.
             code (str): The Python code snippet (matplotlib/seaborn) to execute.
 
         Returns:
-            bytes: The raw image data (PNG format) stored in memory.
+            str: The filename of the saved chart (e.g., 'chart_a1b2c3d4.png').
 
         Raises:
             ValueError: If the data is empty or the code execution fails.
@@ -35,7 +35,7 @@ class IVizService(ABC):
             str: A text summary (e.g., DataFrame.describe()) of the dataset.
         """
         pass
-    
+
     @abstractmethod
     async def get_system_info(self) -> dict[str, str]:
         """Retrieves runtime environment details.
