@@ -23,4 +23,4 @@ USER appuser
 
 EXPOSE 3031
 
-CMD ["uv", "run", "fastmcp", "run", "src/app/main.py:mcp", "--transport", "http", "--host", "0.0.0.0", "--port", "3031"]
+CMD ["uv", "run", "fastmcp", "run", "src/app/main.py:mcp", "--transport", "sse", "--host", "0.0.0.0", "--port", "3031"]
