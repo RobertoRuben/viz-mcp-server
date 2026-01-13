@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   viz-mcp-server:
@@ -10,6 +10,11 @@ services:
       - "3031:3031"
     environment:
       - PYTHONUNBUFFERED=1
+      - MCP_APP_NAME=Viz Engine
+      - MCP_APP_PORT=3031
+      - SHARED_VOLUME_PATH=/app/data
+    volumes:
+      - /opt/danper_data:/app/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3031/sse"]
       interval: 30s
