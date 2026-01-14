@@ -12,10 +12,14 @@ services:
       - PYTHONUNBUFFERED=1
       - MCP_APP_NAME=${MCP_APP_NAME:-Viz Engine}
       - MCP_APP_PORT=${MCP_APP_PORT:-3031}
-      - SHARED_VOLUME_PATH=${SHARED_VOLUME_PATH:-/app/data}
-      - MCP_ENV=${MCP_ENV:-production}
+      - MCP_ENV=${MCP_ENV:-development}
+      - CHART_DPI=${CHART_DPI:-300}
+      - CHART_STYLE=${CHART_STYLE:-whitegrid}
+      - DATA_DIR=${DATA_DIR:-/app/data} 
+      - SHARED_VOLUME_PATH=${DATA_DIR:-/app/data}
+      
     volumes:
-      - ${HOST_SHARED_PATH:-/root/mcp-shared-data}:${SHARED_VOLUME_PATH:-/app/data}
+      - ${HOST_SHARED_PATH:-/root/mcp-shared-data}:${DATA_DIR:-/app/data}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${MCP_APP_PORT:-3031}/sse"]
       interval: 30s
