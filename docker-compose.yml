@@ -7,16 +7,17 @@ services:
     container_name: viz-mcp-server
     restart: unless-stopped
     ports:
-      - "3031:3031"
+      - "${MCP_APP_PORT:-3031}:${MCP_APP_PORT:-3031}"
     environment:
       - PYTHONUNBUFFERED=1
-      - MCP_APP_NAME=Viz Engine
-      - MCP_APP_PORT=3031
-      - SHARED_VOLUME_PATH=/app/data
+      - MCP_APP_NAME=${MCP_APP_NAME:-Viz Engine}
+      - MCP_APP_PORT=${MCP_APP_PORT:-3031}
+      - SHARED_VOLUME_PATH=${SHARED_VOLUME_PATH:-/app/data}
+      - MCP_ENV=${MCP_ENV:-production}
     volumes:
-      - /opt/danper_data:/app/data
+      - ${HOST_SHARED_PATH:-/root/mcp-shared-data}:${SHARED_VOLUME_PATH:-/app/data}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3031/sse"]
+      test: ["CMD", "curl", "-f", "http://localhost:${MCP_APP_PORT:-3031}/sse"]
       interval: 30s
       timeout: 10s
       retries: 3
